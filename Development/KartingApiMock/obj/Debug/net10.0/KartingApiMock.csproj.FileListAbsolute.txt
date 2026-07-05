@@ -1,0 +1,15 @@
+/Users/cyberfourth/Library/Mobile Documents/com~apple~CloudDocs/VSU/Производственная практика/Project/karting-center-surf/Development/KartingApiMock/bin/Debug/net10.0/KartingApiMock
+/Users/cyberfourth/Library/Mobile Documents/com~apple~CloudDocs/VSU/Производственная практика/Project/karting-center-surf/Development/KartingApiMock/bin/Debug/net10.0/KartingApiMock.deps.json
+/Users/cyberfourth/Library/Mobile Documents/com~apple~CloudDocs/VSU/Производственная практика/Project/karting-center-surf/Development/KartingApiMock/bin/Debug/net10.0/KartingApiMock.runtimeconfig.json
+/Users/cyberfourth/Library/Mobile Documents/com~apple~CloudDocs/VSU/Производственная практика/Project/karting-center-surf/Development/KartingApiMock/bin/Debug/net10.0/KartingApiMock.dll
+/Users/cyberfourth/Library/Mobile Documents/com~apple~CloudDocs/VSU/Производственная практика/Project/karting-center-surf/Development/KartingApiMock/bin/Debug/net10.0/KartingApiMock.pdb
+/Users/cyberfourth/Library/Mobile Documents/com~apple~CloudDocs/VSU/Производственная практика/Project/karting-center-surf/Development/KartingApiMock/obj/Debug/net10.0/KartingApiMock.GeneratedMSBuildEditorConfig.editorconfig
+/Users/cyberfourth/Library/Mobile Documents/com~apple~CloudDocs/VSU/Производственная практика/Project/karting-center-surf/Development/KartingApiMock/obj/Debug/net10.0/KartingApiMock.AssemblyInfoInputs.cache
+/Users/cyberfourth/Library/Mobile Documents/com~apple~CloudDocs/VSU/Производственная практика/Project/karting-center-surf/Development/KartingApiMock/obj/Debug/net10.0/KartingApiMock.AssemblyInfo.cs
+/Users/cyberfourth/Library/Mobile Documents/com~apple~CloudDocs/VSU/Производственная практика/Project/karting-center-surf/Development/KartingApiMock/obj/Debug/net10.0/KartingApiMock.csproj.CoreCompileInputs.cache
+/Users/cyberfourth/Library/Mobile Documents/com~apple~CloudDocs/VSU/Производственная практика/Project/karting-center-surf/Development/KartingApiMock/obj/Debug/net10.0/KartingApiMock.sourcelink.json
+/Users/cyberfourth/Library/Mobile Documents/com~apple~CloudDocs/VSU/Производственная практика/Project/karting-center-surf/Development/KartingApiMock/obj/Debug/net10.0/KartingApiMock.dll
+/Users/cyberfourth/Library/Mobile Documents/com~apple~CloudDocs/VSU/Производственная практика/Project/karting-center-surf/Development/KartingApiMock/obj/Debug/net10.0/refint/KartingApiMock.dll
+/Users/cyberfourth/Library/Mobile Documents/com~apple~CloudDocs/VSU/Производственная практика/Project/karting-center-surf/Development/KartingApiMock/obj/Debug/net10.0/KartingApiMock.pdb
+/Users/cyberfourth/Library/Mobile Documents/com~apple~CloudDocs/VSU/Производственная практика/Project/karting-center-surf/Development/KartingApiMock/obj/Debug/net10.0/KartingApiMock.genruntimeconfig.cache
+/Users/cyberfourth/Library/Mobile Documents/com~apple~CloudDocs/VSU/Производственная практика/Project/karting-center-surf/Development/KartingApiMock/obj/Debug/net10.0/ref/KartingApiMock.dll

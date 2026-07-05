@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("KartingApiMock")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9355c04de987f5cd65411e70db9c9e3899dfa4ba")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e11530689da0199ce385ae6d1f2106d9f6df9871")]
 [assembly: System.Reflection.AssemblyProductAttribute("KartingApiMock")]
 [assembly: System.Reflection.AssemblyTitleAttribute("KartingApiMock")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

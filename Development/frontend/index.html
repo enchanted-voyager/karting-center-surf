@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apex Karting — Расписание</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          base: '#07070b',
+          panel: '#0c0c12',
+          accent: '#E7FF3D',
+          danger: '#FF3B4E',
+        },
+        fontFamily: {
+          sans: ['Inter', 'system-ui', 'sans-serif'],
+          display: ['Manrope', 'system-ui', 'sans-serif'],
+        },
+        boxShadow: {
+          glow: '0 0 40px -10px rgba(231,255,61,0.35)',
+          glowRed: '0 0 40px -10px rgba(255,59,78,0.35)',
+        },
+      },
+    },
+  };
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  html, body { height: 100%; }
+  body { background: #07070b; }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .glass {
+    background: rgba(255,255,255,0.045);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .glass-strong {
+    background: rgba(18,18,24,0.85);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .blob {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(70px);
+    opacity: 0.35;
+    animation: drift 14s ease-in-out infinite;
+  }
+  @keyframes drift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(20px, -30px) scale(1.1); }
+  }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes sheetUp { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  @keyframes cardIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -12px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+  .anim-fade { animation: fadeIn .18s ease-out; }
+  .anim-sheet { animation: sheetUp .28s cubic-bezier(.22,1,.36,1); }
+  .anim-card { animation: cardIn .35s ease-out backwards; }
+  .anim-toast { animation: toastIn .25s cubic-bezier(.22,1,.36,1); }
+
+  .nav-btn.is-active { color: #E7FF3D; }
+  .nav-btn.is-active .nav-dot { opacity: 1; transform: scale(1); }
+
+  .eq-btn.is-selected {
+    border-color: #E7FF3D;
+    background: rgba(231,255,61,0.1);
+    color: #E7FF3D;
+  }
+</style>
+</head>
+
+<body class="font-sans text-white antialiased">
+
+  <!-- Ambient background -->
+  <div class="fixed inset-0 -z-10 overflow-hidden bg-base">
+    <div class="blob w-72 h-72 bg-accent -top-10 -left-10"></div>
+    <div class="blob w-80 h-80 bg-danger bottom-0 right-0" style="animation-delay: -6s;"></div>
+  </div>
+
+  <div class="min-h-screen w-full flex items-center justify-center p-4 sm:p-10">
+    <div class="relative w-full max-w-md">
+
+      <!-- Phone frame -->
+      <div class="relative h-[840px] max-h-[88vh] rounded-[2.75rem] border-[6px] border-white/10 bg-panel shadow-[0_40px_90px_-25px_rgba(0,0,0,0.85)] overflow-hidden flex flex-col">
+
+        <!-- Notch -->
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-5 bg-black rounded-b-2xl z-30"></div>
+
+        <!-- Status bar -->
+        <div class="relative z-20 flex items-center justify-between px-7 pt-3 text-[11px] font-semibold text-white/60">
+          <span>9:41</span>
+          <div class="flex items-center gap-1.5">
+            <svg viewBox="0 0 20 12" class="w-4 h-3 fill-white/60"><rect x="0" y="7" width="3" height="5" rx="0.5"/><rect x="5" y="4" width="3" height="8" rx="0.5"/><rect x="10" y="1" width="3" height="11" rx="0.5"/><rect x="15" y="0" width="3" height="12" rx="0.5" class="fill-white/30"/></svg>
+            <svg viewBox="0 0 24 12" class="w-5 h-3 fill-white/60"><path d="M12 2C8 2 4.5 3.6 2 6.1l1.4 1.4C5.6 5.3 8.6 4 12 4s6.4 1.3 8.6 3.5L22 6.1C19.5 3.6 16 2 12 2z"/></svg>
+            <svg viewBox="0 0 25 12" class="w-6 h-3"><rect x="0.5" y="0.5" width="20" height="11" rx="2.5" stroke="currentColor" class="stroke-white/60" fill="none"/><rect x="2" y="2" width="15" height="8" rx="1.2" class="fill-white/60"/><rect x="21.5" y="4" width="1.8" height="4" rx="0.8" class="fill-white/60"/></svg>
+          </div>
+        </div>
+
+        <!-- App header -->
+        <header class="relative z-20 px-5 pt-3 pb-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-[10px] uppercase tracking-[0.25em] text-accent/90 font-semibold">Karting Center</p>
+              <h1 class="text-2xl font-display font-extrabold tracking-tight">Apex<span class="text-accent">.</span></h1>
+            </div>
+            <div class="w-10 h-10 rounded-full glass flex items-center justify-center">
+              <svg viewBox="0 0 24 24" class="w-5 h-5 stroke-white/70" fill="none" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a8.25 8.25 0 0 1 15 0"/></svg>
+            </div>
+          </div>
+        </header>
+
+        <!-- Content -->
+        <main class="relative z-10 flex-1 overflow-y-auto no-scrollbar px-5 pb-6 space-y-4">
+
+          <!-- TAB: Расписание -->
+          <section id="tab-schedule" class="space-y-4">
+            <div class="flex items-end justify-between">
+              <h2 class="text-lg font-display font-bold">Заезды</h2>
+              <span id="scheduleDateLabel" class="text-xs text-white/40"></span>
+            </div>
+
+            <div id="daysList" class="flex gap-2 overflow-x-auto no-scrollbar pb-1"></div>
+
+            <div id="slotsList" class="space-y-4 pt-1"></div>
+          </section>
+
+          <!-- TAB: Мои записи -->
+          <section id="tab-bookings" class="space-y-4 hidden">
+            <h2 class="text-lg font-display font-bold">Мои записи</h2>
+            <div id="bookingsList" class="space-y-4 pt-1"></div>
+          </section>
+
+        </main>
+
+        <!-- Bottom nav -->
+        <nav class="relative z-20 grid grid-cols-2 border-t border-white/10 glass">
+          <button onclick="switchTab('schedule')" data-tab-btn="schedule" class="nav-btn is-active flex flex-col items-center gap-1 py-3 text-[11px] font-semibold text-white/40 transition-colors">
+            <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3.75 8.25h16.5M4.5 5.25h15a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75h-15a.75.75 0 0 1-.75-.75V6a.75.75 0 0 1 .75-.75Z"/></svg>
+            Расписание
+            <span class="nav-dot w-1 h-1 rounded-full bg-accent opacity-0 scale-0 transition-all"></span>
+          </button>
+          <button onclick="switchTab('bookings')" data-tab-btn="bookings" class="nav-btn flex flex-col items-center gap-1 py-3 text-[11px] font-semibold text-white/40 transition-colors">
+            <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"/></svg>
+            Мои записи
+            <span class="nav-dot w-1 h-1 rounded-full bg-accent opacity-0 scale-0 transition-all"></span>
+          </button>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <!-- Booking modal -->
+  <div id="bookingModal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center">
+    <div class="absolute inset-0 bg-black/70 anim-fade" onclick="closeModal('bookingModal')"></div>
+    <div class="relative w-full max-w-md mx-auto glass-strong rounded-t-3xl sm:rounded-3xl p-6 anim-sheet">
+      <div class="w-10 h-1 rounded-full bg-white/15 mx-auto mb-5 sm:hidden"></div>
+      <p class="text-xs uppercase tracking-[0.2em] text-accent/80 font-semibold">Новая бронь</p>
+      <h3 id="modalSlotTitle" class="text-xl font-display font-bold mt-1">Заезд · 12:00</h3>
+      <p id="modalSlotSubtitle" class="text-sm text-white/50 mt-0.5">Короткая трасса · Новички</p>
+
+      <p class="text-sm font-semibold text-white/80 mt-5 mb-2">Экипировка</p>
+      <div class="grid grid-cols-2 gap-3">
+        <button onclick="chooseEquipment('own', this)" class="eq-btn flex flex-col items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] py-4 text-sm font-semibold text-white/70 transition-all">
+          <svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 2.25a7.5 7.5 0 0 0-7.5 7.5v3a2.25 2.25 0 0 0 2.25 2.25h.75v-6h9v6h.75A2.25 2.25 0 0 0 19.5 12.75v-3a7.5 7.5 0 0 0-7.5-7.5ZM7.5 15v3.75A2.25 2.25 0 0 0 9.75 21h4.5a2.25 2.25 0 0 0 2.25-2.25V15"/></svg>
+          Своя
+        </button>
+        <button onclick="chooseEquipment('rental', this)" class="eq-btn flex flex-col items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] py-4 text-sm font-semibold text-white/70 transition-all">
+          <svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 .69-.56 1.25-1.25 1.25h-3.5m-8-5.5v4.25c0 .69.56 1.25 1.25 1.25h3.5M9 9V6.75A2.75 2.75 0 0 1 11.75 4h.5A2.75 2.75 0 0 1 15 6.75V9m-9 4.5h12a1.5 1.5 0 0 0 1.5-1.5v-1.5a1.5 1.5 0 0 0-1.5-1.5H6a1.5 1.5 0 0 0-1.5 1.5V12a1.5 1.5 0 0 0 1.5 1.5Z"/></svg>
+          Прокат
+        </button>
+      </div>
+      <p id="modalHint" class="text-xs text-white/40 mt-3 h-4"></p>
+
+      <div class="flex gap-3 mt-5">
+        <button onclick="closeModal('bookingModal')" class="flex-1 rounded-2xl py-3.5 text-sm font-semibold text-white/70 border border-white/10">Отмена</button>
+        <button onclick="confirmBooking()" class="flex-1 rounded-2xl py-3.5 text-sm font-bold text-black bg-accent shadow-glow active:scale-95 transition-transform">Подтвердить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cancel modal -->
+  <div id="cancelModal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center">
+    <div class="absolute inset-0 bg-black/70 anim-fade" onclick="closeModal('cancelModal')"></div>
+    <div class="relative w-full max-w-md mx-auto glass-strong rounded-t-3xl sm:rounded-3xl p-6 anim-sheet">
+      <div class="w-10 h-1 rounded-full bg-white/15 mx-auto mb-5 sm:hidden"></div>
+      <div class="w-12 h-12 rounded-2xl bg-danger/15 flex items-center justify-center mb-4">
+        <svg viewBox="0 0 24 24" class="w-6 h-6 stroke-danger" fill="none" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.75h.008M10.29 3.86 1.82 18a1.5 1.5 0 0 0 1.29 2.25h17.78A1.5 1.5 0 0 0 22.18 18L13.71 3.86a1.5 1.5 0 0 0-2.62 0Z"/></svg>
+      </div>
+      <h3 class="text-xl font-display font-bold">Отменить запись?</h3>
+      <p id="cancelSlotText" class="text-sm text-white/50 mt-1">Заезд 14:00 · Длинная трасса</p>
+      <div class="flex gap-3 mt-6">
+        <button onclick="closeModal('cancelModal')" class="flex-1 rounded-2xl py-3.5 text-sm font-semibold text-white/70 border border-white/10">Оставить</button>
+        <button onclick="confirmCancel()" class="flex-1 rounded-2xl py-3.5 text-sm font-bold text-white bg-danger shadow-glowRed active:scale-95 transition-transform">Отменить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed top-6 left-1/2 z-[60] hidden">
+    <div class="glass-strong rounded-2xl px-5 py-3 flex items-center gap-2.5 shadow-glow">
+      <svg viewBox="0 0 24 24" class="w-5 h-5 stroke-accent shrink-0" fill="none" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>
+      <span id="toastText" class="text-sm font-semibold"></span>
+    </div>
+  </div>
+
+<script>
+  // ---------- Данные (in-memory, как в мок-API) ----------
+  const days = [
+    { key: 'today', label: 'Сегодня', dateLabel: '5 июля, суббота' },
+    { key: 'sun',   label: 'Вс, 6',   dateLabel: '6 июля, воскресенье' },
+    { key: 'mon',   label: 'Пн, 7',   dateLabel: '7 июля, понедельник' },
+    { key: 'tue',   label: 'Вт, 8',   dateLabel: '8 июля, вторник' },
+  ];
+  let selectedDay = 'today';
+
+  let slots = [
+    { id: 1,  day: 'today', time: '12:00', duration: 20, track: 'short', trackLabel: 'Короткая · Новички', capacity: 8,  free: 8,  marshal: 'Игорь' },
+    { id: 2,  day: 'today', time: '14:00', duration: 20, track: 'long',  trackLabel: 'Длинная · Опытные',  capacity: 14, free: 6,  marshal: 'Марина' },
+    { id: 3,  day: 'today', time: '16:30', duration: 15, track: 'short', trackLabel: 'Короткая · Новички', capacity: 8,  free: 0,  marshal: 'Игорь' },
+    { id: 4,  day: 'today', time: '18:00', duration: 20, track: 'long',  trackLabel: 'Длинная · Опытные',  capacity: 14, free: 14, marshal: 'Марина' },
+
+    { id: 11, day: 'sun',   time: '11:00', duration: 20, track: 'short', trackLabel: 'Короткая · Новички', capacity: 8,  free: 3,  marshal: 'Игорь' },
+    { id: 12, day: 'sun',   time: '15:00', duration: 20, track: 'long',  trackLabel: 'Длинная · Опытные',  capacity: 14, free: 14, marshal: 'Марина' },
+
+    { id: 21, day: 'mon',   time: '13:00', duration: 15, track: 'short', trackLabel: 'Короткая · Новички', capacity: 8,  free: 0,  marshal: 'Игорь' },
+    { id: 22, day: 'mon',   time: '17:00', duration: 20, track: 'long',  trackLabel: 'Длинная · Опытные',  capacity: 14, free: 9,  marshal: 'Марина' },
+  ];
+
+  let bookings = [
+    { id: 1, slotId: 2, equipment: 'own' },
+  ];
+  let nextBookingId = 2;
+
+  let selectedSlotId = null;
+  let selectedEquipment = null;
+  let pendingCancelId = null;
+
+  const equipmentLabel = t => t === 'own' ? 'Своя экипировка' : 'Прокат экипировки';
+
+  // ---------- Рендер ----------
+  function slotCard(slot, i) {
+    const isFull = slot.free <= 0;
+    return `
+      <div class="anim-card glass rounded-3xl p-5" style="animation-delay:${i * 60}ms">
+        <div class="flex items-start justify-between">
+          <div>
+            <div class="flex items-baseline gap-2">
+              <span class="text-2xl font-display font-extrabold tracking-tight">${slot.time}</span>
+              <span class="text-xs text-white/40">${slot.duration} мин + инструктаж</span>
+            </div>
+            <p class="text-sm text-white/60 mt-1">${slot.trackLabel}</p>
+          </div>
+          <span class="shrink-0 text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full ${slot.track === 'short' ? 'bg-accent/15 text-accent' : 'bg-white/10 text-white/70'}">
+            ${slot.track === 'short' ? 'Короткая' : 'Длинная'}
+          </span>
+        </div>
+
+        <div class="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
+          <div class="flex items-center gap-1.5 text-xs ${isFull ? 'text-danger' : 'text-white/50'}">
+            <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"/></svg>
+            ${isFull ? 'Мест нет' : `Свободно карт: <span class="font-bold text-white/80">${slot.free}</span> / ${slot.capacity}`}
+          </div>
+          <button
+            ${isFull ? 'disabled' : `onclick="openBooking(${slot.id})"`}
+            class="${isFull ? 'bg-white/5 text-white/30 cursor-not-allowed' : 'bg-accent text-black active:scale-95 shadow-glow'} rounded-xl px-4 py-2.5 text-sm font-bold transition-transform">
+            ${isFull ? 'Занято' : 'Забронировать'}
+          </button>
+        </div>
+      </div>`;
+  }
+
+  function bookingCard(b, i) {
+    const slot = slots.find(s => s.id === b.slotId);
+    if (!slot) return '';
+    return `
+      <div class="anim-card glass rounded-3xl p-5" style="animation-delay:${i * 60}ms">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full bg-accent/15 text-accent">Активна</span>
+          <span class="text-xs text-white/40">Бронь #${b.id}</span>
+        </div>
+        <div class="flex items-baseline gap-2 mt-3">
+          <span class="text-2xl font-display font-extrabold tracking-tight">${slot.time}</span>
+          <span class="text-xs text-white/40">${slot.duration} мин</span>
+        </div>
+        <p class="text-sm text-white/60 mt-1">${slot.trackLabel} · маршал ${slot.marshal}</p>
+
+        <div class="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
+          <div class="flex items-center gap-1.5 text-xs text-white/50">
+            <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/></svg>
+            ${equipmentLabel(b.equipment)}
+          </div>
+          <button onclick="openCancelConfirm(${b.id})" class="rounded-xl px-4 py-2.5 text-sm font-bold border border-danger/40 text-danger active:scale-95 transition-transform">
+            Отменить
+          </button>
+        </div>
+      </div>`;
+  }
+
+  function emptySchedule() {
+    return `
+      <div class="anim-card glass rounded-3xl p-8 text-center">
+        <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mx-auto mb-3">
+          <svg viewBox="0 0 24 24" class="w-6 h-6 stroke-white/40" fill="none" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3.75 8.25h16.5M4.5 5.25h15a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75h-15a.75.75 0 0 1-.75-.75V6a.75.75 0 0 1 .75-.75Z"/></svg>
+        </div>
+        <p class="text-sm font-semibold text-white/70">Пока нет доступных заездов</p>
+        <p class="text-xs text-white/40 mt-1">Загляните позже или выберите другой день</p>
+      </div>`;
+  }
+
+  function emptyBookings() {
+    return `
+      <div class="anim-card glass rounded-3xl p-8 text-center">
+        <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mx-auto mb-3">
+          <svg viewBox="0 0 24 24" class="w-6 h-6 stroke-white/40" fill="none" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"/></svg>
+        </div>
+        <p class="text-sm font-semibold text-white/70">Пока нет записей</p>
+        <p class="text-xs text-white/40 mt-1">Выберите заезд в расписании</p>
+      </div>`;
+  }
+
+  function renderSlots() {
+    const daySlots = slots.filter(s => s.day === selectedDay);
+    document.getElementById('slotsList').innerHTML = daySlots.length
+      ? daySlots.map(slotCard).join('')
+      : emptySchedule();
+  }
+  function renderBookings() {
+    document.getElementById('bookingsList').innerHTML = bookings.length
+      ? bookings.map(bookingCard).join('')
+      : emptyBookings();
+  }
+
+  function dayChip(day) {
+    const active = day.key === selectedDay;
+    return `
+      <button onclick="selectDay('${day.key}')" class="shrink-0 px-4 py-1.5 rounded-full text-xs font-bold transition-colors ${active ? 'bg-accent text-black' : 'glass text-white/60 font-semibold'}">
+        ${day.label}
+      </button>`;
+  }
+  function renderDays() {
+    document.getElementById('daysList').innerHTML = days.map(dayChip).join('');
+    document.getElementById('scheduleDateLabel').textContent = days.find(d => d.key === selectedDay).dateLabel;
+  }
+  function selectDay(key) {
+    selectedDay = key;
+    renderDays();
+    renderSlots();
+  }
+
+  // ---------- Вкладки ----------
+  function switchTab(tab) {
+    document.getElementById('tab-schedule').classList.toggle('hidden', tab !== 'schedule');
+    document.getElementById('tab-bookings').classList.toggle('hidden', tab !== 'bookings');
+    document.querySelectorAll('[data-tab-btn]').forEach(btn => {
+      btn.classList.toggle('is-active', btn.dataset.tabBtn === tab);
+    });
+  }
+
+  // ---------- Модалка бронирования ----------
+  function openBooking(slotId) {
+    const slot = slots.find(s => s.id === slotId);
+    if (!slot) return;
+    selectedSlotId = slotId;
+    selectedEquipment = null;
+    document.getElementById('modalSlotTitle').textContent = `Заезд · ${slot.time}`;
+    document.getElementById('modalSlotSubtitle').textContent = `${slot.trackLabel} · маршал ${slot.marshal}`;
+    document.getElementById('modalHint').textContent = '';
+    document.querySelectorAll('.eq-btn').forEach(b => b.classList.remove('is-selected'));
+    openModal('bookingModal');
+  }
+
+  function chooseEquipment(type, el) {
+    selectedEquipment = type;
+    document.querySelectorAll('.eq-btn').forEach(b => b.classList.remove('is-selected'));
+    el.classList.add('is-selected');
+    document.getElementById('modalHint').textContent = '';
+  }
+
+  function confirmBooking() {
+    if (!selectedEquipment) {
+      document.getElementById('modalHint').textContent = 'Выберите тип экипировки';
+      document.getElementById('modalHint').classList.add('text-danger');
+      return;
+    }
+    const slot = slots.find(s => s.id === selectedSlotId);
+    if (!slot || slot.free <= 0) return;
+
+    slot.free -= 1;
+    bookings.push({ id: nextBookingId++, slotId: slot.id, equipment: selectedEquipment });
+
+    closeModal('bookingModal');
+    renderSlots();
+    renderBookings();
+    showToast('Бронь создана! Увидимся на трассе 🏁');
+  }
+
+  // ---------- Модалка отмены ----------
+  function openCancelConfirm(bookingId) {
+    const b = bookings.find(x => x.id === bookingId);
+    const slot = b ? slots.find(s => s.id === b.slotId) : null;
+    pendingCancelId = bookingId;
+    document.getElementById('cancelSlotText').textContent = slot
+      ? `Заезд ${slot.time} · ${slot.trackLabel}`
+      : '';
+    openModal('cancelModal');
+  }
+
+  function confirmCancel() {
+    const b = bookings.find(x => x.id === pendingCancelId);
+    if (!b) return;
+    const slot = slots.find(s => s.id === b.slotId);
+    if (slot) slot.free += 1;
+    bookings = bookings.filter(x => x.id !== pendingCancelId);
+
+    closeModal('cancelModal');
+    renderBookings();
+    renderSlots();
+    showToast('Бронь отменена, место снова свободно');
+  }
+
+  // ---------- Модалки / тост ----------
+  function openModal(id) {
+    const el = document.getElementById(id);
+    el.classList.remove('hidden');
+    el.classList.add('flex');
+  }
+  function closeModal(id) {
+    const el = document.getElementById(id);
+    el.classList.add('hidden');
+    el.classList.remove('flex');
+  }
+
+  let toastTimer;
+  function showToast(text) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toastText').textContent = text;
+    toast.style.transform = 'translateX(-50%)';
+    toast.classList.remove('hidden');
+    toast.classList.add('anim-toast');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.add('hidden'), 2400);
+  }
+
+  // ---------- Инициализация ----------
+  renderDays();
+  renderSlots();
+  renderBookings();
+</script>
+</body>
+</html>
